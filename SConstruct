@@ -45,10 +45,9 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 
 # Python include
-python_dir = "C:/Users/zhiyuan.han/AppData/Local/Programs/Python/Python312"
-env.Append(CPPPATH=[path.join(python_dir, "include")])
-env.Append(CPPPATH=[path.join(python_dir, "Lib/site-packages/pybind11/include")])
-env.Append(LIBPATH=[path.join(python_dir, "libs")])
+env.Append(CPPPATH=[path.join("python312", "include")])
+env.Append(CPPPATH=[path.join("pybind11", "include")])
+env.Append(LIBPATH=[path.join("python312", "libs")])
 env.Append(LINKFLAGS=["python3.lib", "python312.lib"])
 
 env.Append(CPPPATH=["src/"])
