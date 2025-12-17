@@ -12,9 +12,6 @@ void PythonInterpreter::print_type(const Variant &p_variant) const {
 String PythonInterpreter::runPython(String data) {
 	py::scoped_interpreter guard{};
 	String result_value = "";
-	py::module_ sys = py::module_::import("sys");
-	sys.attr("path")
-		.attr("append")("E:/Projects/pyGodot/demo/bin");
 	try {
 		py::module_ calc= py::module_::import("Main");
 		std::string stdstring_foo(data.utf8().get_data());
