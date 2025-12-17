@@ -1,7 +1,7 @@
 # Godot auto generated files
 *.gen.*
 .godot/
-
+demo/.godot/
 # Ignore library files but not the gdextension file
 demo/bin/*
 !demo/bin/android

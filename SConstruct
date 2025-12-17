@@ -1,11 +1,17 @@
 #!/usr/bin/env python
 import os
 import sys
-
+from os import path
 from methods import print_error
+import shutil
 
 
-libname = "EXTENSION-NAME"
+libname = "pyGodot"
+libuid = "c0bljng070vo4"
+entry_symbol = "example_library_init"
+compatibility = "4.1"
+
+buildir = "bin"
 projectdir = "demo"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
@@ -52,13 +58,36 @@ if env["target"] in ["editor", "template_debug"]:
 suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
 
 lib_filename = "{}{}{}{}".format(env.subst('$SHLIBPREFIX'), libname, suffix, env.subst('$SHLIBSUFFIX'))
-
+lib_platform_path = "{}/{}".format(env['platform'], lib_filename)
+lib_path = f"{buildir}/{lib_platform_path}"
 library = env.SharedLibrary(
-    "bin/{}/{}".format(env['platform'], lib_filename),
+    lib_path,
     source=sources,
 )
 
-copy = env.Install("{}/bin/{}/".format(projectdir, env["platform"]), library)
+copy = env.Install("{}/{}/{}/".format(projectdir, buildir, env["platform"]), library)
+
+
+# Create gdextension file and gdextension.uid file
+gdextension_file = path.join(buildir, "{}.gdextension".format(libname))
+gdextension_uid_file = path.join(buildir, "{}.gdextension.uid".format(libname))
+
+# Write to the gdextension file
+with open(gdextension_file, 'w', encoding='utf-8') as f:
+    f.write("[configuration]\n\n")
+    f.write(f"entry_symbol = \"{entry_symbol}\"\n")
+    f.write(f"compatibility_minimum = \"{compatibility}\"\n\n")
+    f.write("[libraries]\n")
+
+    f.write(f"windows.x86_64.single.debug = \"./{lib_platform_path}\"\n")
+    f.write(f"windows.x86_64.single.release = \"./{lib_platform_path}\"")
+
+# Write to the gdextension.uid file
+with open(gdextension_uid_file, 'w') as f:
+    f.write(f"uid://{libuid}\n")  # Replace with a unique identifier or generate one dynamically
+
+shutil.copy(gdextension_file, path.join(projectdir, gdextension_file))
+shutil.copy(gdextension_uid_file, path.join(projectdir, gdextension_uid_file))
 
 default_args = [library, copy]
 Default(*default_args)
